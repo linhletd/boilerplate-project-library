@@ -3,7 +3,7 @@
 var express     = require('express');
 var bodyParser  = require('body-parser');
 var cors        = require('cors');
-
+var helmet      = require('helmet');
 var apiRoutes         = require('./routes/api.js');
 var fccTestingRoutes  = require('./routes/fcctesting.js');
 var runner            = require('./test-runner');
@@ -16,7 +16,8 @@ app.use(cors({origin: '*'})); //USED FOR FCC TESTING PURPOSES ONLY!
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
+app.use(helmet.noCache());
+app.use(helmet.hidePoweredBy({setTo: 'PHP 4.2.0'}))
 //Index page (static HTML)
 app.route('/')
   .get(function (req, res) {
@@ -30,11 +31,11 @@ fccTestingRoutes(app);
 apiRoutes(app);  
     
 //404 Not Found Middleware
-app.use(function(req, res, next) {
-  res.status(404)
-    .type('text')
-    .send('Not Found');
-});
+// app.use(function(req, res, next) {
+//   res.status(404)
+//     .type('text')
+//     .send('Not Found');
+// });
 
 //Start our server and tests!
 app.listen(process.env.PORT || 3000, function () {
